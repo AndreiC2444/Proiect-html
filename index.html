@@ -1,10 +1,579 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <title>hi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel 3x3 Avansat cu Imagini</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(to right, #ff9a9e, #fad0c4, #fad0c4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .table-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .advanced-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        
+        .advanced-table th {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            padding: 20px 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .advanced-table th:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff9a9e, transparent);
+        }
+        
+        .advanced-table td {
+            padding: 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
+            transition: all 0.4s ease;
+            height: 200px;
+        }
+        
+        .advanced-table td:hover {
+            transform: scale(1.03);
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cell-content {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .cell-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .advanced-table td:hover .cell-image {
+            transform: scale(1.1);
+        }
+        
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 20px 15px 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            transform: translateY(20px);
+        }
+        
+        .advanced-table td:hover .image-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .image-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .image-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .lightbox-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .lightbox-close:hover {
+            background: rgba(255, 0, 0, 0.7);
+            transform: rotate(90deg);
+        }
+        
+        .lightbox-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            animation: fadeIn 1.5s ease;
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .advanced-table td {
+                height: 150px;
+            }
+            
+            .image-title {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .advanced-table th {
+                font-size: 1rem;
+                padding: 15px 10px;
+            }
+            
+            .advanced-table td {
+                height: 120px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>sigma</h1>
-  <p>hello</p>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-images"></i> Galerie Foto Avansată</h1>
+            <p class="subtitle">Un tabel 3x3 interactiv cu imagini spectaculoase și efecte moderne</p>
+        </header>
+        
+        <div class="controls">
+            <button class="btn" id="shuffle-btn"><i class="fas fa-random"></i> Amestecă Imagini</button>
+            <button class="btn" id="zoom-in-btn"><i class="fas fa-search-plus"></i> Mărește</button>
+            <button class="btn" id="zoom-out-btn"><i class="fas fa-search-minus"></i> Micșorează</button>
+            <button class="btn" id="effect-btn"><i class="fas fa-magic"></i> Schimbă Efect</button>
+        </div>
+        
+        <div class="table-container">
+            <table class="advanced-table">
+                <thead>
+                    <tr>
+                        <th>Amintiri</th>
+                        <th>Amintiri</th>
+                        <th>Sigma</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/amintiri%201.png.jpg" alt="imagine 1" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">sigma</div>
+                                    <div class="image-description">sigma</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202025-04-16%20at%2012.44.20_aceef597.jpg.jpg" alt="imagine 2" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">plz 10</div>
+                                    <div class="image-description">no</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202024-10-20%20at%2018.13.39_f882194c.jpg.jpg" alt="imagine 3" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">bunaă</div>
+                                    <div class="image-description">bravo</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202024-10-20%20at%2018.13.40_0d78f786.jpg.jpg" alt="imagine 4" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">tungtungtung</div>
+                                    <div class="image-description">tungutngtgun</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202025-03-06%20at%2019.03.42_2b4205ba.jpg.jpg" alt="imagine 5" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">nimic</div>
+                                    <div class="image-description">sigma</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202025-03-06%20at%2019.03.45_206f8d57.jpg.jpg" alt="imagine 6" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">tungtungtung</div>
+                                    <div class="image-description">mi lene</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202025-03-06%20at%2019.03.47_dff76250.jpg.jpg" alt="imagine 7" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">skbidi</div>
+                                    <div class="image-description">vreau la skibidi</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202025-04-16%20at%2012.44.20_aceef597.jpg.jpg" alt="imagine 8" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title"></div>
+                                    <div class="image-description">Design avangardist</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-content">
+                                <img src="file:///C:/Users/guoha/OneDrive/Desktop/sigma/html%20informatica/WhatsApp%20Image%202025-04-16%20at%2012.44.20_f16c9bfe.jpg.jpg" alt="imagine 9" class="cell-image">
+                                <div class="image-overlay">
+                                    <div class="image-title">ok</div>
+                                    <div class="image-description">ok</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <p>Tabel HTML 3x3 Avansat cu Imagini & Efecte Interactive | Design Modern cu Glassmorphism</p>
+        </footer>
+    </div>
+    
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-close" id="lightbox-close"><i class="fas fa-times"></i></div>
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-image" id="lightbox-image">
+            <div class="lightbox-info">
+                <h3 id="lightbox-title"></h3>
+                <p id="lightbox-description"></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const lightboxTitle = document.getElementById('lightbox-title');
+        const lightboxDescription = document.getElementById('lightbox-description');
+        const lightboxClose = document.getElementById('lightbox-close');
+        
+        // Add click event to all images
+        document.querySelectorAll('.cell-image').forEach(image => {
+            image.addEventListener('click', () => {
+                const content = image.closest('.cell-content');
+                const title = content.querySelector('.image-title').textContent;
+                const description = content.querySelector('.image-description').textContent;
+                
+                lightboxImage.src = image.src;
+                lightboxTitle.textContent = title;
+                lightboxDescription.textContent = description;
+                
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        // Close lightbox
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close lightbox when clicking outside
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Button functionality
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        const effectBtn = document.getElementById('effect-btn');
+        const tableCells = document.querySelectorAll('.advanced-table td');
+        
+        let currentHeight = 200;
+        
+        // Shuffle images
+        shuffleBtn.addEventListener('click', () => {
+            const images = Array.from(document.querySelectorAll('.cell-image'));
+            const sources = images.map(img => img.src);
+            
+            // Shuffle sources
+            for (let i = sources.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [sources[i], sources[j]] = [sources[j], sources[i]];
+            }
+            
+            // Apply shuffled sources
+            images.forEach((img, index) => {
+                img.src = sources[index];
+            });
+            
+            // Add animation effect
+            tableCells.forEach(cell => {
+                cell.style.animation = 'none';
+                setTimeout(() => {
+                    cell.style.animation = 'fadeIn 0.5s ease';
+                }, 10);
+            });
+        });
+        
+        // Zoom in
+        zoomInBtn.addEventListener('click', () => {
+            if (currentHeight < 300) {
+                currentHeight += 30;
+                tableCells.forEach(cell => {
+                    cell.style.height = `${currentHeight}px`;
+                });
+            }
+        });
+        
+        // Zoom out
+        zoomOutBtn.addEventListener('click', () => {
+            if (currentHeight > 150) {
+                currentHeight -= 30;
+                tableCells.forEach(cell => {
+                    cell.style.height = `${currentHeight}px`;
+                });
+            }
+        });
+        
+        // Change effect
+        effectBtn.addEventListener('click', () => {
+            const colors = ['#1a2a6c', '#b21f1f', '#1a2a6c'];
+            const randomColor1 = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+            const randomColor2 = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+            const randomColor3 = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+            
+            document.body.style.background = `linear-gradient(135deg, ${randomColor1}, ${randomColor2}, ${randomColor3})`;
+            
+            // Change button effects
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.style.background = `rgba(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255}, 0.1)`;
+            });
+        });
+    </script>
 </body>
 </html>
